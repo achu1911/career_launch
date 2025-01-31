@@ -3,84 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Reviews</title>
+    <title>SummarAI - Course Review Summarizer</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
-            background-color: #f9f9f9;
-        }
-
-        .container {
-            text-align: center;
-            background: #ffffff;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
+            margin: 0;
         }
 
         h1 {
-            margin-bottom: 1.5rem;
-            font-size: 1.8rem;
-            color: #333333;
+            color: #007BFF;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: 600;
         }
 
-        form {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
-            color: #555555;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-            border: 1px solid #cccccc;
+        .container {
+            background-color: #fff;
+            padding: 30px;
             border-radius: 8px;
-            font-size: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.1em;
+            margin-top: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
         }
 
         button {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.2em;
             background-color: #007BFF;
-            color: #ffffff;
+            color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            border-radius: 8px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            margin-top: 20px;
         }
 
         button:hover {
             background-color: #0056b3;
         }
+
+        #summary {
+            margin-top: 20px;
+            font-size: 1.2em;
+            line-height: 1.6;
+            color: #333;
+            background-color: #fafafa;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            input, button {
+                font-size: 1em;
+            }
+        }
     </style>
 </head>
 <body>
+
+    <h1>SummarAI - Course Review Summarizer</h1>
+
     <div class="container">
-        <h1>Welcome to Course Reviews</h1>
-        <form action="/course" method="post">
-            <label for="course_name">Enter Course Name:</label>
-            <input type="text" id="course_name" name="course_name" required>
-            <button type="submit">Get Reviews</button>
-        </form>
-        <form action="/professor" method="post">
-            <label for="professor_name">Filter by Professor:</label>
-            <input type="text" id="professor_name" name="professor_name">
-            <button type="submit">Filter Reviews</button>
-        </form>
+        <div class="input-group">
+            <label for="courseInput">Course Name:</label>
+            <input type="text" id="courseInput" placeholder="Enter course name">
+        </div>
+        
+        <div class="input-group">
+            <label for="professorInput">Professor Name:</label>
+            <input type="text" id="professorInput" placeholder="Enter professor name">
+        </div>
+        
+        <button onclick="fetchReviews()">Summarize Reviews</button>
+        
+        <div id="summary"></div>
     </div>
+
+    <script>
+        function fetchReviews() {
+            const courseName = document.getElementById("courseInput").value;
+            const professor = document.getElementById("professorInput").value;
+            
+            if (!courseName || !professor) {
+                alert("Please enter both course name and professor name.");
+                return;
+            }
+
+        
+            const apiUrl = `http://127.0.0.1:5000/summarize?course=${courseName}&professor=${professor}`;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+                    document.getElementById("summary").innerText = data.summary || "No summary available.";
+                })
+                .catch(error => console.error("Error fetching summary:", error));
+        }
+    </script>
+
 </body>
 </html>
